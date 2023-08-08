@@ -31,13 +31,32 @@ public class ReadMailExample {
             store.connect(host, user, password);
 
             // create the inbox object and open it
+            // get today's date
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.HOUR_OF_DAY, 0); // set hour to midnight
+            calendar.set(Calendar.MINUTE, 0); // set minute in hour
+            calendar.set(Calendar.SECOND, 0); // set second in minute
+            calendar.set(Calendar.MILLISECOND, 0); // set millisecond in second
+
+            Date today = calendar.getTime(); // get current date
+
+// create the inbox object and open it
             Folder inbox = store.getFolder("Vietdq");
             inbox.open(Folder.READ_WRITE);
 
-// Lấy các tin nhắn phù hợp với bộ lọc
+// create a search term for all "unseen" messages
+            Flags seen = new Flags(Flags.Flag.SEEN);
+            FlagTerm unseenFlagTerm = new FlagTerm(seen, false);
 
-            // retrieve the messages from the folder in an array and print it
-            Message[] messages = inbox.search(new FlagTerm(new Flags(Flag.SEEN), false));
+// create a search term for all recent messages
+            ReceivedDateTerm receivedDateTerm = new ReceivedDateTerm(ComparisonTerm.EQ, today);
+
+// create a search term that combines the two
+            SearchTerm searchTerm = new AndTerm(unseenFlagTerm, receivedDateTerm);
+
+// perform the search and get the results
+            Message[] messages = inbox.search(searchTerm);
+
             System.out.println("messages.length---" + messages.length);
 
             for (int i = 0, n = messages.length; i < n; i++) {
