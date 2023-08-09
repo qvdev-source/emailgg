@@ -84,10 +84,10 @@ public class ReadMailExample {
             ReceivedDateTerm receivedDateTerm = new ReceivedDateTerm(ComparisonTerm.GE, thirtyMinutesAgo);
 
 // create a search term that combines the two
-            SearchTerm searchTerm = new ReceivedDateTerm(ComparisonTerm.EQ, today);
+            SearchTerm searchTerm =receivedDateTerm;
 
 // perform the search and get the results
-//            inbox.doCommand()
+            inbox.doCommand()
             Message[] messages = inbox.search(searchTerm);
 
 
