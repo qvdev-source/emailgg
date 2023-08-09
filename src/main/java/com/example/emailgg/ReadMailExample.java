@@ -38,13 +38,38 @@ public class ReadMailExample {
 
             // create the inbox object and open it
             // get today's date
-            Calendar calendar = Calendar.getInstance();
-            calendar.set(Calendar.HOUR_OF_DAY, 0); // set hour to midnight
-            calendar.set(Calendar.MINUTE, 0); // set minute in hour
-            calendar.set(Calendar.SECOND, 0); // set second in minute
-            calendar.set(Calendar.MILLISECOND, 0); // set millisecond in second
+//            Calendar calendar = Calendar.getInstance();
+//            calendar.set(Calendar.HOUR_OF_DAY, 0); // set hour to midnight
+//            calendar.set(Calendar.MINUTE, 0); // set minute in hour
+//            calendar.set(Calendar.SECOND, 0); // set second in minute
+//            calendar.set(Calendar.MILLISECOND, 0); // set millisecond in second
+//
+//            Date today = calendar.getTime(); // get current date
+//
+//// create the inbox object and open it
+//            Folder inbox = store.getFolder("Vietdq");
+//            inbox.open(Folder.READ_WRITE);
+//
+//// create a search term for all "unseen" messages
+//            Flags seen = new Flags(Flags.Flag.SEEN);
+//            FlagTerm unseenFlagTerm = new FlagTerm(seen, false);
+//
+//// create a search term for all recent messages
+//            ReceivedDateTerm receivedDateTerm = new ReceivedDateTerm(ComparisonTerm.EQ, today);
+//
+//// create a search term that combines the two
+//            SearchTerm searchTerm = new AndTerm(unseenFlagTerm, receivedDateTerm);
+//
+//// perform the search and get the results
+//            Message[] messages = inbox.search(searchTerm);
+            // get current time
+            Date now = new Date();
 
-            Date today = calendar.getTime(); // get current date
+// get 30 minutes ago
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(now);
+            calendar.add(Calendar.MINUTE, -30);
+            Date thirtyMinutesAgo = calendar.getTime();
 
 // create the inbox object and open it
 
@@ -55,8 +80,8 @@ public class ReadMailExample {
 //            Flags seen = new Flags(Flags.Flag.SEEN);
 //            FlagTerm unseenFlagTerm = new FlagTerm(seen, false);
 
-// create a search term for all recent messages
-            ReceivedDateTerm receivedDateTerm = new ReceivedDateTerm(ComparisonTerm.EQ, today);
+// create a search term for all messages received in the last 30 minutes
+            ReceivedDateTerm receivedDateTerm = new ReceivedDateTerm(ComparisonTerm.GE, thirtyMinutesAgo);
 
 // create a search term that combines the two
             SearchTerm searchTerm = new ReceivedDateTerm(ComparisonTerm.EQ, today);
