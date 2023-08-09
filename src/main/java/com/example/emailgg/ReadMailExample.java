@@ -10,6 +10,7 @@ import jakarta.mail.search.ComparisonTerm;
 import jakarta.mail.search.ReceivedDateTerm;
 import jakarta.mail.search.SearchTerm;
 
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -74,7 +75,7 @@ public class ReadMailExample {
 
 // create the inbox object and open it
 
-            GmailFolder inbox = (GmailFolder) store.getFolder("Vietdq");
+            GmailFolder inbox = (GmailFolder) store.getFolder("INBOX");
             inbox.open(Folder.READ_WRITE);
 
 //// create a search term for all "unseen" messages
@@ -85,7 +86,12 @@ public class ReadMailExample {
             ReceivedDateTerm receivedDateTerm = new ReceivedDateTerm(ComparisonTerm.GE, thirtyMinutesAgo);
 
 // create a search term that combines the two
-            SearchTerm searchTerm = new GmailRawSearchTerm("label:Vietdq -label:[vietdq]-done");
+            long fiveMinutesAgo = Instant.now().minusSeconds(5 * 60).getEpochSecond();
+
+            // Build the query
+            String query = "after:" + fiveMinutesAgo;
+//            SearchTerm searchTerm = new GmailRawSearchTerm("label:Vietdq -label:[vietdq]-done");
+            SearchTerm searchTerm = new GmailRawSearchTerm(query);
 
 // perform the search and get the results
             Message[] messages = inbox.search(searchTerm);
@@ -101,7 +107,8 @@ public class ReadMailExample {
 //                System.out.println("From: " + message.getFrom()[0]);
 
                 GmailMessage gmsg = (GmailMessage) message;
-                gmsg.setLabels(new String[]{"[Vietdq]/done"}, true);
+
+//                gmsg.setLabels(new String[]{"Vietdq/done"}, true);
 //                GmailMessage gmsg = (GmailMessage) message;
 //                gmsg.setLabels(new String[]{"Vietdq"}, false);
 
