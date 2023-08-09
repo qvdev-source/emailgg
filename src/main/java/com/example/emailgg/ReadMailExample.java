@@ -91,11 +91,10 @@ public class ReadMailExample {
             // Build the query
             String query = "after:" + fiveMinutesAgo;
 //            SearchTerm searchTerm = new GmailRawSearchTerm("label:Vietdq -label:[vietdq]-done");
-            SearchTerm searchTerm = new GmailRawSearchTerm(query);
+            SearchTerm searchTerm = new GmailRawSearchTerm("label:Vietdq -label:vietdq/done "+ query);
 
 // perform the search and get the results
             Message[] messages = inbox.search(searchTerm);
-
 
 
             System.out.println("messages.length---" + messages.length);
@@ -107,8 +106,7 @@ public class ReadMailExample {
 //                System.out.println("From: " + message.getFrom()[0]);
 
                 GmailMessage gmsg = (GmailMessage) message;
-
-//                gmsg.setLabels(new String[]{"Vietdq/done"}, true);
+                gmsg.setLabels(new String[]{"Vietdq/done"}, true);
 //                GmailMessage gmsg = (GmailMessage) message;
 //                gmsg.setLabels(new String[]{"Vietdq"}, false);
 
@@ -131,9 +129,9 @@ public class ReadMailExample {
 //                                    break;
 //                                }
                             }
-                        }
-                        catch (Exception e) {
-                            System.out.println("Parse sai");;
+                        } catch (Exception e) {
+                            System.out.println("Parse sai");
+                            ;
                         }
                     }
                 }
@@ -142,8 +140,7 @@ public class ReadMailExample {
             inbox.close(false);
             store.close();
 
-        }
-         catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -153,7 +150,7 @@ public class ReadMailExample {
         String username = null;
         String transactionId = null;
         String[] lines = text.split("\n");
-        try{
+        try {
             for (String line : lines) {
                 if (line.startsWith("Amount:")) {
                     amountString = Double.parseDouble(line.split(" ")[3].replace("*", ""));
@@ -184,10 +181,10 @@ public class ReadMailExample {
                 } else if (line.startsWith("ID Thanh toán ")) {
                     transactionId = line.substring(15).trim();
                 } else if (line.startsWith("Thanh toán cho ")) {
-                     line.substring(15).trim();
+                    line.substring(15).trim();
                 }
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             return Topup.builder().hasBug(1).build();
         }
 
@@ -198,31 +195,30 @@ public class ReadMailExample {
         Double amountString = null;
         String username = null;
         String transactionId = null;
-        String content  = null;
+        String content = null;
         String[] lines = text.split("\n");
-        try{
+        try {
             for (int i = 0; i < lines.length; i++) {
                 if (lines[i].startsWith("Số tiền")) {
-                    String[] parts = lines[i+2].split(" ");
-                amountString = Double.parseDouble(parts[0].trim());
+                    String[] parts = lines[i + 2].split(" ");
+                    amountString = Double.parseDouble(parts[0].trim());
 //                    amountString = Double.parseDouble("145");
                 } else if (lines[i].startsWith("Mục đích thanh toán")) {
-                    content = lines[i+2].trim();
+                    content = lines[i + 2].trim();
                 } else if (lines[i].startsWith("Mã giao dịch")) {
-                    transactionId = lines[i+2].trim();
+                    transactionId = lines[i + 2].trim();
                 } else if (lines[i].startsWith("Quý khách đã nhận được thanh toán từ Người dùng")) {
                     int startIndex = lines[i].indexOf('*') + 1;
                     int endIndex = lines[i].indexOf('*', startIndex);
                     username = lines[i].substring(startIndex, endIndex).trim();
                 }
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             return Topup.builder().hasBug(1).messageId(messageId).build();
         }
 
         return Topup.builder().amount(amountString).username(username).transactionId(transactionId).content(content).messageId(messageId).build();
     }
-
 
 
     private static Topup checkFrom(String text, String messageId) {
