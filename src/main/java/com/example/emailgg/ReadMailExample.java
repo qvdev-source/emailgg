@@ -2,6 +2,7 @@ package com.example.emailgg;
 
 import com.sun.mail.gimap.GmailFolder;
 import com.sun.mail.gimap.GmailMessage;
+import com.sun.mail.gimap.GmailRawSearchTerm;
 import com.sun.mail.gimap.GmailStore;
 import jakarta.mail.*;
 import jakarta.mail.internet.MimeMessage;
@@ -84,10 +85,9 @@ public class ReadMailExample {
             ReceivedDateTerm receivedDateTerm = new ReceivedDateTerm(ComparisonTerm.GE, thirtyMinutesAgo);
 
 // create a search term that combines the two
-            SearchTerm searchTerm =receivedDateTerm;
+            SearchTerm searchTerm = new GmailRawSearchTerm("label:Vietdq -label:[vietdq]-done");
 
 // perform the search and get the results
-            inbox.doCommand()
             Message[] messages = inbox.search(searchTerm);
 
 
@@ -114,13 +114,15 @@ public class ReadMailExample {
                             if (bodyPart.isMimeType("text/plain")) {
                                 long start = System.currentTimeMillis();
                                 System.out.println(bodyPart.getContent().toString());
-                                Topup topup = checkFrom(bodyPart.getContent().toString(), ((MimeMessage) message).getMessageID());
-                                System.out.println(topup);
+//                                Topup topup = checkFrom(bodyPart.getContent().toString(), ((MimeMessage) message).getMessageID());
+//                                System.out.println(topup);
                                 long end = System.currentTimeMillis();
-                                System.out.println("Total =====>" + (end-start));
-                                if (topup.getContent() != null && topup.getAmount() != null && topup.getTransactionId() != null && topup.getUsername() != null) {
-                                    break;
-                                }
+//                                System.out.println("Total =====>" + (end-start));
+//                                if (topup.getContent() != null && topup.getAmount()
+//                                        != null &&
+//                                        topup.getTransactionId() != null && topup.getUsername() != null) {
+//                                    break;
+//                                }
                             }
                         }
                         catch (Exception e) {
