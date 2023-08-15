@@ -1,4 +1,4 @@
-package com.example.emailgg;
+package com.example.emailgg.email;
 
 import com.sun.mail.gimap.GmailFolder;
 import com.sun.mail.gimap.GmailMessage;

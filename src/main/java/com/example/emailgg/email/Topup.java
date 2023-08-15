@@ -1,4 +1,4 @@
-package com.example.emailgg;
+package com.example.emailgg.email;
 
 import lombok.Builder;
 import lombok.Data;

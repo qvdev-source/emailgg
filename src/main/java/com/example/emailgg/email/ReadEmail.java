@@ -1,7 +1,7 @@
-package com.example.emailgg;
+package com.example.emailgg.email;
 
 import jakarta.mail.*;
-import jakarta.mail.internet.*;
+import jakarta.mail.internet.InternetAddress;
 
 import java.util.Properties;
 
