@@ -58,8 +58,8 @@ public class ReadMailExample {
                         BodyPart bodyPart = multipart.getBodyPart(j);
                         try {
                             if (bodyPart.isMimeType("text/plain")) {
-                                Topup topup = checkFrom(bodyPart.getContent().toString(), ((MimeMessage) message).getMessageID());
-                                System.out.println(topup);
+//                                Topup topup = checkFrom(bodyPart.getContent().toString(), ((MimeMessage) message).getMessageID());
+//                                System.out.println(topup);
                             }
                         } catch (Exception e) {
                             System.out.println("Parse sai");
@@ -77,98 +77,7 @@ public class ReadMailExample {
         }
     }
 
-    public static Topup fromTextPingPong(String text, String messageId) {
-        Double amountString = null;
-        String username = null;
-        String transactionId = null;
-        String[] lines = text.split("\n");
-        try {
-            for (String line : lines) {
-                if (line.startsWith("Amount:")) {
-                    amountString = Double.parseDouble(handleAmount(line.trim()));
-                } else if (line.startsWith("From:")) {
-                    username = line.substring(line.indexOf(' ') + 1).trim();
-                } else if (line.startsWith("Transaction ID:")) {
-                    transactionId = line.split(" ")[2].trim();
-                }
-            }
-        } catch (Exception e) {
-            return Topup.builder().hasBug(1).build();
-        }
-        return Topup.builder().amount(amountString).username(username).transactionId(transactionId).content(null).messageId(messageId).build();
-    }
-
-    public static Topup fromTextPayOneer(String text, String messageId) {
-        Double amountString = null;
-        String username = null;
-        String transactionId = null;
-
-        String[] lines = text.split("\n");
-        try {
-            for (String line : lines) {
-                if (line.startsWith("Số tiền $")) {
-                    amountString = Double.parseDouble(handleAmount(line.trim()));
-                } else if (line.startsWith("Được gửi bởi ")) {
-                    username = line.substring(14).trim();
-                } else if (line.startsWith("ID Thanh toán ")) {
-                    transactionId = line.substring(15).trim();
-                } else if (line.startsWith("Thanh toán cho ")) {
-                    line.substring(15).trim();
-                }
-            }
-        } catch (Exception e) {
-            return Topup.builder().hasBug(1).build();
-        }
-
-        return Topup.builder().amount(amountString).username(username).transactionId(transactionId).content(null).messageId(messageId).build();
-    }
-
-    public static Topup fromTextLianLian(String text, String messageId) {
-        System.out.println(text);
-        Double amountString = null;
-        String username = null;
-        String transactionId = null;
-        String content = null;
-        String[] lines = text.split("\n");
-        try {
-            for (int i = 0; i < lines.length; i++) {
-                if (lines[i].startsWith("Kính chào Quý khách LEADSGEN MEDIA AND ONLINE SOLUTION COMPANY LIMITED")) {
-                    if (amountString == null){
-                        amountString =Double.parseDouble(handleAmount(lines[i + 7].trim()));
-                    }
-                } else if (lines[i].startsWith("Mục đích thanh toán")) {
-                    content = lines[i + 2].trim();
-                } else if (lines[i].startsWith("Mã giao dịch")) {
-                    transactionId = lines[i + 2].trim();
-                } else if (lines[i].startsWith("Quý khách đã nhận được thanh toán từ Người dùng")) {
-                    int startIndex = lines[i].indexOf('*') + 1;
-                    int endIndex = lines[i].indexOf('*', startIndex);
-                    username = lines[i].substring(startIndex, endIndex).trim();
-                }
-            }
-        } catch (Exception e) {
-            return Topup.builder().hasBug(1).messageId(messageId).build();
-        }
-        return Topup.builder().amount(amountString).username(username).transactionId(transactionId).content(content).messageId(messageId).build();
-    }
-
-
-    private static Topup checkFrom(String text, String messageId) {
-        String[] lines = text.split("\n");
-        List<String> list = Arrays.asList(lines);
-        for (String s:list) {
-            if (s.contains("PingPong")) {
-                return fromTextPingPong(text, messageId);
-            } else if (s.contains("Payoneer")) {
-                return fromTextPayOneer(text, messageId);
-            } else if (s.contains("LianLian")) {
-                return fromTextLianLian(text, messageId);
-            }
-        }
-        return Topup.builder().build();
-    }
-
-    private static String handleAmount(String str) {
+     static String handleAmount(String str) {
         int firstDigitIndex = -1;
         int lastDigitIndex = -1;
 
@@ -193,11 +102,21 @@ public class ReadMailExample {
     public static void main(String[] args) {
 
         String host = "imap.gmail.com";
-        String mailStoreType = "imap";
         String username = "hienquoc412018@gmail.com";
         String password = "vumpmssqlqjrysxf";
 
-        check(host, mailStoreType, username, password);
+        EmailService emailService = new EmailService();
+        TopupParser topupParser = new TopupParser();
+
+        // Build the search term
+        SearchTerm searchTerm = new GmailRawSearchTerm("label:Vietdq");
+
+        Message[] messages = emailService.fetchEmails(host, username, password, searchTerm);
+//        for (Message message : messages) {
+//            String content = /* Extract content from message */;
+//            Topup topup = topupParser.parseFromEmail(content, message.getMessageID());
+//            System.out.println(topup);
+//        }
 
 
     }

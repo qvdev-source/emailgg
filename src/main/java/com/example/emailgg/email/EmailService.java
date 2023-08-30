@@ -20,6 +20,7 @@ public class EmailService {
             properties.put("mail.imap.ssl.trust", host);
 
             Session emailSession = Session.getDefaultInstance(properties);
+            // create the Gimap store object and connect to the imap server
             GmailStore store = new GmailStore(emailSession, null);
             store.connect(host, user, password);
 
